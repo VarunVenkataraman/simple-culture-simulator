@@ -11,18 +11,14 @@
 
 ## Understanding the Architecture
 
-### Why tesseract_api.py doesn't import tesseract_core
-
-This is a common point of confusion! Here's the breakdown:
-
-**Developer Role (You - Building the Container):**
+**Developer Role (Building the Container):**
 - `tesseract_api.py` defines the **interface** of your simulator
 - It uses Pydantic schemas to define inputs/outputs
 - The `apply()` function is the entry point that Tesseract will call
 - **You don't import tesseract_core here** - this file gets packaged INTO the container
 - Think of it as: "This is what my simulator does"
 
-**Client Role (Others - Using the Container):**
+**Client Role (Using the Container):**
 - Clients import `from tesseract_core import Tesseract`
 - They use this to **load and interact** with your pre-built container
 - The tesseract_core SDK handles Docker/REST communication
@@ -117,9 +113,9 @@ tesseract run ipsc-culture-simulator:latest apply '{"inputs": {"threshold": 1.0,
 ### 4. Verify Gradients are Non-Zero and Non-NaN
 
 **What to check:**
-- ✓ Gradients should be real numbers (not NaN or Inf)
-- ✓ At least one gradient should be non-zero
-- ✓ Gradients should change when you change input parameters
+-  Gradients should be real numbers (not NaN or Inf)
+-  At least one gradient should be non-zero
+-  Gradients should change when you change input parameters
 
 **Test Script:**
 ```bash
@@ -619,14 +615,5 @@ docker rmi ipsc-culture-simulator:old-version
   }
 }
 ```
-
----
-
-## Next Steps
-
-1. **Test the container** using the commands in Section 2
-2. **Try client-side usage** with Python SDK (Section 3.1)
-3. **Run an optimization** using one of the integration examples (Section 5)
-4. **Modify the simulator** following the developer workflow (Section 4)
 
 For questions or issues, check the [Tesseract documentation](https://docs.pasteurlabs.ai/projects/tesseract-core/stable/).
