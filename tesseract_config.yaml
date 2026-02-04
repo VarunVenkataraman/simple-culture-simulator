@@ -1,0 +1,17 @@
+# Tesseract Configuration for iPSC Culture Simulator
+name: "ipsc-culture-simulator"
+version: "1.0.0"
+description: "Differentiable iPSC culture simulator with continuous passaging logic"
+
+build_config:
+  base_image: "python:3.12-slim"
+  extra_packages:
+    - build-essential
+    - libxml2-dev
+    - libexpat1
+  package_data:
+    - ["src/tesseract_interface.py", "/tesseract/tesseract_interface.py"]
+    - ["src/bridge.py", "/tesseract/bridge.py"]
+    - ["src/continuous_logic.py", "/tesseract/continuous_logic.py"]
+    - ["models/generic_stem_cell.xml", "/tesseract/models/generic_stem_cell.xml"]
+    - ["models/generic_stem_cell.py", "/tesseract/models/generic_stem_cell.py"]

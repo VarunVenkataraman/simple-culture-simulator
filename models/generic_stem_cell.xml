@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model id="iPSC_Culture_Model" name="Generic iPSC Culture Model">
+
+    <!-- Compartment -->
+    <listOfCompartments>
+      <compartment id="culture" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+
+    <!-- Species (State Variables) -->
+    <listOfSpecies>
+      <species id="S" name="Stem_Cells" compartment="culture" initialConcentration="0.1"
+               hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="D" name="Differentiated_Cells" compartment="culture" initialConcentration="0.01"
+               hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="N" name="Nutrients" compartment="culture" initialConcentration="1.0"
+               hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+
+    <!-- Parameters -->
+    <listOfParameters>
+      <!-- Growth and division rates -->
+      <parameter id="r_S" name="stem_growth_rate" value="0.5" constant="true"/>
+      <parameter id="k_diff" name="differentiation_rate" value="0.05" constant="true"/>
+      <parameter id="r_D" name="differentiated_growth_rate" value="0.1" constant="true"/>
+
+      <!-- Nutrient parameters -->
+      <parameter id="k_N" name="nutrient_uptake_rate" value="0.3" constant="true"/>
+      <parameter id="K_N" name="nutrient_half_saturation" value="0.5" constant="true"/>
+
+      <!-- Death rates -->
+      <parameter id="d_S" name="stem_death_rate" value="0.02" constant="true"/>
+      <parameter id="d_D" name="differentiated_death_rate" value="0.03" constant="true"/>
+
+      <!-- Nutrient depletion -->
+      <parameter id="c_S" name="stem_nutrient_consumption" value="0.2" constant="true"/>
+      <parameter id="c_D" name="differentiated_nutrient_consumption" value="0.1" constant="true"/>
+
+      <!-- Carrying capacity -->
+      <parameter id="K_max" name="max_capacity" value="1.0" constant="true"/>
+    </listOfParameters>
+
+    <!-- Reactions (Define ODEs) -->
+    <listOfReactions>
+
+      <!-- Stem cell growth -->
+      <reaction id="stem_growth" reversible="false">
+        <listOfReactants>
+          <speciesReference species="N" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="S" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>r_S</ci>
+              <ci>S</ci>
+              <apply>
+                <divide/>
+                <ci>N</ci>
+                <apply>
+                  <plus/>
+                  <ci>K_N</ci>
+                  <ci>N</ci>
+                </apply>
+              </apply>
+              <apply>
+                <minus/>
+                <cn>1</cn>
+                <apply>
+                  <divide/>
+                  <apply>
+                    <plus/>
+                    <ci>S</ci>
+                    <ci>D</ci>
+                  </apply>
+                  <ci>K_max</ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Stem cell differentiation -->
+      <reaction id="differentiation" reversible="false">
+        <listOfReactants>
+          <speciesReference species="S" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="D" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>k_diff</ci>
+              <ci>S</ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Differentiated cell growth -->
+      <reaction id="differentiated_growth" reversible="false">
+        <listOfReactants>
+          <speciesReference species="N" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="D" stoichiometry="1" constant="false"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>r_D</ci>
+              <ci>D</ci>
+              <apply>
+                <divide/>
+                <ci>N</ci>
+                <apply>
+                  <plus/>
+                  <ci>K_N</ci>
+                  <ci>N</ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Stem cell death -->
+      <reaction id="stem_death" reversible="false">
+        <listOfReactants>
+          <speciesReference species="S" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>d_S</ci>
+              <ci>S</ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Differentiated cell death -->
+      <reaction id="differentiated_death" reversible="false">
+        <listOfReactants>
+          <speciesReference species="D" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>d_D</ci>
+              <ci>D</ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Nutrient consumption by stem cells -->
+      <reaction id="nutrient_consumption_S" reversible="false">
+        <listOfReactants>
+          <speciesReference species="N" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>c_S</ci>
+              <ci>S</ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+      <!-- Nutrient consumption by differentiated cells -->
+      <reaction id="nutrient_consumption_D" reversible="false">
+        <listOfReactants>
+          <speciesReference species="N" stoichiometry="1" constant="false"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci>c_D</ci>
+              <ci>D</ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+
+    </listOfReactions>
+
+  </model>
+</sbml>
